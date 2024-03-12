@@ -14,6 +14,8 @@ function App() {
         <Route path='/read' element={<Read />}></Route>
         <Route path='/update' element={<Update />}></Route>
         {/* <Index />  */}
+
+        {/* init commit */}
       </Routes>
     </BrowserRouter>
   );
