@@ -9,7 +9,6 @@ import Update from './components/Update';
 function App() {
   return (
     <BrowserRouter>
-
       <Routes>
         <Route exact path='/' element={<Create />}></Route>
         <Route path='/read' element={<Read />}></Route>

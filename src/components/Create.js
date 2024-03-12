@@ -5,6 +5,7 @@ const Create = () => {
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     // const [error, setError] = useState("");
 
     const header = { "Access-Control-Allow-Origin": "*" };
@@ -16,10 +17,13 @@ const Create = () => {
     // }
     const [errors, setErrors] = useState({
         name: "",
-        email: ""
+        email: "",
     })
-
     console.log(errors)
+
+
+    const passArray = [];
+    console.log("🤡 ~ file: Create.js:26 ~ Create ~ passArray:", passArray);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -30,10 +34,29 @@ const Create = () => {
         };
 
         const isValid = validateEmail(email);
-
         console.log("🤡 ~ file: Create.js:34 ~ handleSubmit ~ isValid:", name.length > 2);
 
+        const validPassword = (password) => {
+            const errorTemp = []
+
+            if (!password.match(
+                /[A-Z]/
+            )) {
+                errorTemp.push(" UpperCase")
+            }
+
+            if (!password.match(
+                /[0-9]/
+            )) {
+                errorTemp.push("Number")
+            }
+            return errorTemp
+        }
         setErrors({})
+        const passErr = validPassword(password)
+
+        console.log("🤡 ~ file: Create.js:75 ~ handleSubmit ~ passErr:", passErr);
+
 
         if (!(name)) {
             setErrors((err) => ({
@@ -47,13 +70,29 @@ const Create = () => {
                 email: "Please Enter Valid Email"
             }))
         }
+        // if (!validPass) {
+        //     passArray.push(" Minimum 8 character")
+        // }
+        // if (!validPass2) {
+        //     passArray.push(" at least 1 uppercase letter")
+        // }
+        // if (!digitValidPass) {
+        //     passArray.push(" at least 1 number")
+        // }
 
-        if (name.length >= 2 && isValid) {
+        if (passErr?.length) {
+            setErrors((err) => ({
+                ...err,
+                password: `It should contain${passErr?.join(" & ")}`
+            }))
+        }
+        if (name && isValid && passErr?.length === 0) {
             axios.post(
                 "https://65e9627b4bb72f0a9c515536.mockapi.io/crud-operation",
                 {
                     name: name,
                     email: email,
+                    password: password,
                     header,
                 }
             )
@@ -62,7 +101,6 @@ const Create = () => {
                     console.log(name, email)
                 })
         }
-
     }
     return <>
         <h1 className='text-center'>CRUD PROJECT</h1>
@@ -73,7 +111,7 @@ const Create = () => {
                     <label className="form-label">Name</label>
                     <input type="text" placeholder='Enter Your Name' className={`form-control ${errors?.name && "is-invalid"}`} id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => (setName(e.target.value))} />
                     {
-                        errors.name && <p>{`${errors.name}`}</p>
+                        errors.name && <p className='text-danger'>{`${errors.name}`}</p>
                     }
                 </div>
                 <div className="mb-3">
@@ -84,7 +122,15 @@ const Create = () => {
                         errors.email &&
                         <p className='text-danger'>{`${errors.email}`}</p>
                     }
-
+                </div>
+                <div className='mb-3'>
+                    <label className="form-label">Password</label>
+                    <input className={`form-control ${errors.password && "is-invalid"}`} type="text" placeholder='Enter Your Password' value={password} id="exampleInputPassword1" onChange={(e) => setPassword(e.target.value)} />
+                    {
+                        errors.password && <p className='text-danger'>
+                            {errors.password}
+                        </p>
+                    }
                 </div>
 
                 <button type="submit" className="btn btn-primary"  >Submit</button>
